@@ -76,43 +76,29 @@ export default function TotalTonnage() {
   const progressPercent = currentGoal > 0 ? Math.min((currentTotal / currentGoal) * 100, 100) : 0;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4">
-      <div className="relative w-full max-w-sm">
-        <div className="bg-black rounded-[3rem] p-3 shadow-2xl">
-          <div className="bg-white rounded-[2.5rem] overflow-hidden h-[700px] flex flex-col">
-            {/* Status Bar */}
-            <div className="bg-white px-6 pt-3 pb-2">
-              <div className="flex justify-between items-center text-xs font-semibold">
-                <span>9:41</span>
-                <div className="flex items-center gap-1">
-                  <svg className="w-4 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
-                  <svg className="w-4 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>
-                  <svg className="w-5 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm11 1H6v8l4-2 4 2V6z"/></svg>
-                </div>
-              </div>
-            </div>
+    <div className="h-full w-full bg-gray-50 overflow-hidden">
+      <div className="max-w-md mx-auto bg-white h-full flex flex-col shadow-lg">
+        {/* Nav Bar */}
+        <div className="bg-white px-4 py-4 border-b border-gray-200 flex justify-between items-center shrink-0">
+          <h1 className="text-2xl font-bold">
+            {currentTab === 'home' ? 'Progress' : currentTab === 'diary' ? 'Workouts' : 'Insights'}
+          </h1>
+          {currentTab === 'diary' && (
+            <button
+              onClick={() => {
+                setEditingWorkout(null);
+                setShowWorkoutModal(true);
+              }}
+              className="text-blue-500 text-3xl"
+            >
+              +
+            </button>
+          )}
+        </div>
 
-            {/* Nav Bar */}
-            <div className="bg-white px-4 py-3 border-b border-gray-200 flex justify-between items-center">
-              <h1 className="text-2xl font-bold">
-                {currentTab === 'home' ? 'Progress' : currentTab === 'diary' ? 'Workouts' : 'Insights'}
-              </h1>
-              {currentTab === 'diary' && (
-                <button
-                  onClick={() => {
-                    setEditingWorkout(null);
-                    setShowWorkoutModal(true);
-                  }}
-                  className="text-blue-500 text-3xl"
-                >
-                  +
-                </button>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-auto bg-gray-50">
-              {currentTab === 'home' ? (
+        {/* Content */}
+        <div className="flex-1 overflow-auto bg-gray-50">
+          {currentTab === 'home' ? (
                 <div className="p-6 space-y-6">
                   {years.length > 1 && (
                     <div className="flex gap-2 justify-center">
@@ -277,45 +263,43 @@ export default function TotalTonnage() {
                   )}
                 </>
               )}
-            </div>
+        </div>
 
-            {/* Tab Bar */}
-            <div className="bg-white border-t border-gray-200 flex">
-              <button
-                onClick={() => setCurrentTab('home')}
-                className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
-                  currentTab === 'home' ? 'text-blue-500' : 'text-gray-400'
-                }`}
-              >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                </svg>
-                <span className="text-xs font-medium">Home</span>
-              </button>
-              <button
-                onClick={() => setCurrentTab('diary')}
-                className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
-                  currentTab === 'diary' ? 'text-blue-500' : 'text-gray-400'
-                }`}
-              >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
-                </svg>
-                <span className="text-xs font-medium">Diary</span>
-              </button>
-              <button
-                onClick={() => setCurrentTab('insights')}
-                className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
-                  currentTab === 'insights' ? 'text-blue-500' : 'text-gray-400'
-                }`}
-              >
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
-                </svg>
-                <span className="text-xs font-medium">Insights</span>
-              </button>
-            </div>
-          </div>
+        {/* Tab Bar */}
+        <div className="bg-white border-t border-gray-200 flex shrink-0">
+          <button
+            onClick={() => setCurrentTab('home')}
+            className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
+              currentTab === 'home' ? 'text-blue-500' : 'text-gray-400'
+            }`}
+          >
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+            </svg>
+            <span className="text-xs font-medium">Home</span>
+          </button>
+          <button
+            onClick={() => setCurrentTab('diary')}
+            className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
+              currentTab === 'diary' ? 'text-blue-500' : 'text-gray-400'
+            }`}
+          >
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
+            </svg>
+            <span className="text-xs font-medium">Diary</span>
+          </button>
+          <button
+            onClick={() => setCurrentTab('insights')}
+            className={`flex-1 py-3 flex flex-col items-center gap-1 transition-colors ${
+              currentTab === 'insights' ? 'text-blue-500' : 'text-gray-400'
+            }`}
+          >
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+            </svg>
+            <span className="text-xs font-medium">Insights</span>
+          </button>
         </div>
       </div>
 
@@ -399,6 +383,48 @@ function InsightsPage({ workouts }) {
     return allNames.filter(name => name.toLowerCase().startsWith(inputLower));
   };
 
+  // Helper function to get week number of the year (1-52)
+  const getWeekNumber = (date) => {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return weekNo;
+  };
+
+  // Export to Excel (CSV format)
+  const exportToExcel = () => {
+    if (workouts.length === 0) {
+      alert('No workouts to export!');
+      return;
+    }
+
+    // Create CSV content
+    let csv = 'Date,Workout Name,Exercise,Sets,Reps,Weight (lbs),Total Weight (lbs)\n';
+    
+    workouts
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .forEach(workout => {
+        workout.exercises.forEach(exercise => {
+          csv += `${workout.date},${workout.name},"${exercise.name}",${exercise.sets},${exercise.reps},${exercise.weight},${Math.round(exercise.total)}\n`;
+        });
+      });
+
+    // Create download link
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `total-tonnage-export-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Calculate data for bar graph
   const getGraphData = () => {
     const now = new Date();
@@ -421,7 +447,7 @@ function InsightsPage({ workouts }) {
         });
       }
     } else if (timeView === 'weekly') {
-      // Last 8 weeks
+      // Last 8 weeks with actual week numbers
       for (let i = 7; i >= 0; i--) {
         const endDate = new Date(now);
         endDate.setDate(endDate.getDate() - (i * 7));
@@ -435,8 +461,11 @@ function InsightsPage({ workouts }) {
           })
           .reduce((sum, w) => sum + w.totalWeight, 0);
         
+        // Calculate week number of the year
+        const weekNumber = getWeekNumber(endDate);
+        
         data.push({
-          label: `W${8 - i}`,
+          label: `W${weekNumber}`,
           value: total
         });
       }
@@ -542,6 +571,17 @@ function InsightsPage({ workouts }) {
 
   return (
     <div className="p-4 space-y-6">
+      {/* Export Button */}
+      <button
+        onClick={exportToExcel}
+        className="w-full py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition-colors flex items-center justify-center gap-2"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Export to Excel
+      </button>
+
       {/* Streak Card */}
       <div className="bg-gradient-to-r from-orange-400 to-red-500 rounded-xl p-6 text-white shadow-lg">
         <p className="text-sm opacity-90 mb-1">Current Streak</p>
