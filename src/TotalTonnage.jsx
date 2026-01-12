@@ -29,8 +29,14 @@ export default function TotalTonnage() {
     localStorage.setItem('yearlyGoals', JSON.stringify(yearlyGoal));
   }, [yearlyGoal]);
 
-  const addWorkout = (workout) => {
-    setWorkouts([...workouts, { ...workout, id: Date.now() }]);
+  const addEntry = (entry) => {
+    // Ensure date is stored as local date string (no timezone conversion)
+    const workoutEntry = {
+      ...entry,
+      id: Date.now(),
+      date: entry.date // Keep as YYYY-MM-DD string
+    };
+    setWorkouts([...workouts, workoutEntry]);
     setShowWorkoutModal(false);
     setEditingWorkout(null);
   };
@@ -45,6 +51,12 @@ export default function TotalTonnage() {
     setWorkouts(workouts.filter(w => w.id !== id));
   };
 
+  // Helper function to parse date string as local date (not UTC)
+  const parseLocalDate = (dateString) => {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
   const editWorkout = (workout) => {
     setEditingWorkout(workout);
     setShowWorkoutModal(true);
@@ -57,18 +69,18 @@ export default function TotalTonnage() {
 
   const totalWeight = (year) => {
     return workouts
-      .filter(w => new Date(w.date).getFullYear() === year)
+      .filter(w => parseLocalDate(w.date).getFullYear() === year)
       .reduce((sum, w) => sum + w.totalWeight, 0);
   };
 
   const allYears = () => {
-    const years = [...new Set(workouts.map(w => new Date(w.date).getFullYear()))];
+    const years = [...new Set(workouts.map(w => parseLocalDate(w.date).getFullYear()))];
     return years.sort((a, b) => b - a);
   };
 
   const filteredWorkouts = workouts
-    .filter(w => new Date(w.date).getFullYear() === selectedYear)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .filter(w => parseLocalDate(w.date).getFullYear() === selectedYear)
+    .sort((a, b) => parseLocalDate(b.date) - parseLocalDate(a.date));
 
   const years = allYears();
   const currentTotal = totalWeight(selectedYear);
@@ -235,7 +247,7 @@ export default function TotalTonnage() {
                           <div className="flex justify-between items-start mb-3">
                             <div className="flex-1" onClick={() => editWorkout(workout)} style={{ cursor: 'pointer' }}>
                               <h3 className="text-lg font-semibold text-gray-900">{workout.name}</h3>
-                              <p className="text-sm text-gray-500">{new Date(workout.date).toLocaleDateString()}</p>
+                              <p className="text-sm text-gray-500">{parseLocalDate(workout.date).toLocaleDateString()}</p>
                             </div>
                             <div className="flex items-center gap-3">
                               <span className="text-xl font-bold text-blue-500">
@@ -404,7 +416,13 @@ function InsightsPage({ workouts }) {
     let csv = 'Date,Workout Name,Exercise,Sets,Reps,Weight (lbs),Total Weight (lbs)\n';
     
     workouts
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .sort((a, b) => {
+        const [aYear, aMonth, aDay] = a.date.split('-').map(Number);
+        const [bYear, bMonth, bDay] = b.date.split('-').map(Number);
+        const aDate = new Date(aYear, aMonth - 1, aDay);
+        const bDate = new Date(bYear, bMonth - 1, bDay);
+        return aDate - bDate;
+      })
       .forEach(workout => {
         workout.exercises.forEach(exercise => {
           csv += `${workout.date},${workout.name},"${exercise.name}",${exercise.sets},${exercise.reps},${exercise.weight},${Math.round(exercise.total)}\n`;
@@ -456,7 +474,8 @@ function InsightsPage({ workouts }) {
         
         const total = workouts
           .filter(w => {
-            const wDate = new Date(w.date);
+            const [year, month, day] = w.date.split('-').map(Number);
+            const wDate = new Date(year, month - 1, day);
             return wDate >= startDate && wDate <= endDate;
           })
           .reduce((sum, w) => sum + w.totalWeight, 0);
@@ -479,8 +498,8 @@ function InsightsPage({ workouts }) {
         
         const total = workouts
           .filter(w => {
-            const wDate = new Date(w.date);
-            return wDate.getMonth() === month && wDate.getFullYear() === year;
+            const [wYear, wMonth] = w.date.split('-').map(Number);
+            return wMonth - 1 === month && wYear === year;
           })
           .reduce((sum, w) => sum + w.totalWeight, 0);
         
@@ -508,7 +527,9 @@ function InsightsPage({ workouts }) {
       return 0;
     }
     
-    let currentDate = new Date(sortedDates[0]);
+    // Parse as local date
+    const [year, month, day] = sortedDates[0].split('-').map(Number);
+    let currentDate = new Date(year, month - 1, day);
     
     for (let i = 0; i < sortedDates.length; i++) {
       const expectedDate = new Date(currentDate);
