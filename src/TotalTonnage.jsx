@@ -321,7 +321,7 @@ export default function TotalTonnage() {
             setShowWorkoutModal(false);
             setEditingWorkout(null);
           }}
-          onSave={editingWorkout ? updateWorkout : addWorkout}
+          onSave={editingWorkout ? updateWorkout : addEntry}
           workout={editingWorkout}
         />
       )}
